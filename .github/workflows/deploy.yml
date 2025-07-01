@@ -33,4 +33,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: |
             pages project list
-            pages deploy ./build --project-name=demo-actions --branch=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
+            pages deploy ./build --project-name=davids-landing --branch=${{ github.ref == 'refs/heads/main' && 'main' || 'develop' }}
