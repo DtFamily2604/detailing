@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ContactForm from "./ContacnForm";
-import car1_before from "./assets/car1_before.jpg";
-import car1_after from "./assets/car1_after.jpg";
-import car2_before from "./assets/car2_before.jpg";
-import car2_after from "./assets/car2_after.jpg";
-import car3_before from "./assets/car3_before.jpg";
-import car3_after from "./assets/car3_after.jpg";
-import car4_before from "./assets/car4_before.jpg";
-import car4_after from "./assets/car4_after.jpg";
-import car5_before from "./assets/car5_before.jpg";
-import car5_after from "./assets/car5_after.jpg";
-import car6_before from "./assets/car6_before.jpg";
-import car6_after from "./assets/car6_after.jpg";
+import { images } from "./assets";
 
 function App() {
   const [lightboxIndex, setLightboxIndex] = useState(null);
@@ -20,33 +9,33 @@ function App() {
   const portfolioItems = [
     {
       id: 1,
-      before: car1_before,
-      after: car1_after,
+      before: images.car1.before,
+      after: images.car1.after,
     },
     {
       id: 2,
-      before: car2_before,
-      after: car2_after,
+      before: images.car2.before,
+      after: images.car2.after,
     },
     {
       id: 3,
-      before: car3_before,
-      after: car3_after,
+      before: images.car3.before,
+      after: images.car3.after,
     },
     {
       id: 4,
-      before: car4_before,
-      after: car4_after,
+      before: images.car4.before,
+      after: images.car4.after,
     },
     {
       id: 5,
-      before: car5_before,
-      after: car5_after,
+      before: images.car5.before,
+      after: images.car5.after,
     },
     {
       id: 6,
-      before: car6_before,
-      after: car6_after,
+      before: images.car6.before,
+      after: images.car6.after,
     },
   ];
 

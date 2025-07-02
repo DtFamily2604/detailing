@@ -28,6 +28,7 @@ jobs:
         run: yarn build
         env:
           REACT_APP_FORMSPREE_ID: ${{ secrets.REACT_APP_FORMSPREE_ID }}
+          REACT_APP_PUBLIC_URL: ${{ github.ref == 'refs/heads/main' && 'https://davidsdetailing.org' || 'https://preview.davidsdetailing.org' }}
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
