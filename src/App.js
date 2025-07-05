@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import Lightbox from "./Lightbox";
 import ContactForm from "./ContacnForm";
 import { images } from "./assets";
 
@@ -49,64 +50,13 @@ function App() {
   ];
 
   // Detect if viewport is mobile (<768px)
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  // const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(() => {
-    function onResize() {
-      setIsMobile(window.innerWidth < 768);
-    }
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  // Navigation handlers
-  const handlePrev = (e) => {
-    e?.stopPropagation();
-    setLightboxIndex((prev) => (prev === 0 ? portfolioItems.length - 1 : prev - 1));
-  };
-
-  const handleNext = (e) => {
-    e?.stopPropagation();
-    setLightboxIndex((prev) => (prev === portfolioItems.length - 1 ? 0 : prev + 1));
-  };
-
-  // Swipe support
-  const touchStartX = useRef(null);
-  const touchEndX = useRef(null);
-  const minSwipeDistance = 50; // px
-
-  const onTouchStart = (e) => {
-    touchStartX.current = e.changedTouches[0].screenX;
-  };
-
-  const onTouchEnd = (e) => {
-    touchEndX.current = e.changedTouches[0].screenX;
-    if (touchStartX.current === null || touchEndX.current === null) return;
-
-    const distance = touchStartX.current - touchEndX.current;
-    if (Math.abs(distance) > minSwipeDistance) {
-      if (distance > 0) {
-        setLightboxIndex((prev) => (prev === portfolioItems.length - 1 ? 0 : prev + 1));
-      } else {
-        setLightboxIndex((prev) => (prev === 0 ? portfolioItems.length - 1 : prev - 1));
-      }
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
-  // Close lightbox on outside click
-  const closeLightbox = () => setLightboxIndex(null);
-
-  // Smooth scroll for anchors (keep your existing code)
-  useEffect(() => {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener("click", function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute("href"))?.scrollIntoView({ behavior: "smooth" });
-      });
-    });
-  }, []);
-
+    const interval = setInterval(() => {
+      setCurrentReview((prev) => (prev + 1) % reviews.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [reviews.length]);
 
   return (
     <div className="bg-gray-100 text-gray-900">
@@ -172,10 +122,9 @@ function App() {
         </div>
       </section>
 
-      {/* Portfolio */}
-      <section className="py-16 px-4 bg-white">
-        <h2 className="text-3xl font-bold text-center mb-6">Portfolio</h2>
-
+    {/* Portfolio grid */}
+    <section className="py-16 px-4 bg-white">
+      <h2 className="text-3xl font-bold text-center mb-6">Portfolio</h2>
         <div className="grid gap-6 max-w-6xl mx-auto">
           {portfolioItems.map((item, index) => (
             <div
@@ -212,65 +161,16 @@ function App() {
           ))}
         </div>
 
-        {/* Lightbox Modal */}
-        {lightboxIndex !== null && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50 p-4"
-            onClick={closeLightbox}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            <div
-              className="flex flex-col sm:flex-row gap-4 w-full max-w-5xl items-center"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Show both before and after images side-by-side on all devices */}
-              <div className="relative w-full sm:w-1/2 max-h-[80vh]">
-                <img
-                  src={portfolioItems[lightboxIndex].before}
-                  alt="Before"
-                  className="w-full h-full object-contain border-4 border-white rounded-lg"
-                  draggable={false}
-                />
-                <span className="absolute top-2 left-2 bg-red-700 text-white text-xs px-2 py-1 rounded">
-                  Before
-                </span>
-              </div>
-
-              <div className="relative w-full sm:w-1/2 max-h-[80vh]">
-                <img
-                  src={portfolioItems[lightboxIndex].after}
-                  alt="After"
-                  className="w-full h-full object-contain border-4 border-white rounded-lg"
-                  draggable={false}
-                />
-                <span className="absolute top-2 left-2 bg-green-700 text-white text-xs px-2 py-1 rounded">
-                  After
-                </span>
-              </div>
-            </div>
-
-            {/* Buttons on tablet/desktop */}
-            {!isMobile && (
-              <div className="mt-6 flex gap-4">
-                <button
-                  onClick={handlePrev}
-                  className="bg-white text-black px-6 py-2 rounded hover:bg-gray-200 transition"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="bg-white text-black px-6 py-2 rounded hover:bg-gray-200 transition"
-                >
-                  Next
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
       </section>
+
+      <Lightbox
+        items={portfolioItems}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNext={() => setLightboxIndex((prev) => (prev === portfolioItems.length - 1 ? 0 : prev + 1))}
+        onPrev={() => setLightboxIndex((prev) => (prev === 0 ? portfolioItems.length - 1 : prev - 1))}
+        hideButtonsOnMobile={true}
+      />
 
       {/* Review Carousel */}
       <section className="py-16 px-4 bg-gray-50 text-center">
