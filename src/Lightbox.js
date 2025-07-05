@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import PropTypes from "prop-types";
 function useMediaQuery(query) {
   const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
 
@@ -99,5 +99,18 @@ function Lightbox({ items, index, onClose, onNext, onPrev, hideButtonsOnMobile }
     </div>
   );
 }
+Lightbox.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      before: PropTypes.string.isRequired,
+      after: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  index: PropTypes.number,
+  onClose: PropTypes.func.isRequired,
+  onNext: PropTypes.func.isRequired,
+  onPrev: PropTypes.func.isRequired,
+  hideButtonsOnMobile: PropTypes.bool,
+};
 
 export default Lightbox;
