@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
+
 function useMediaQuery(query) {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  const [matches, setMatches] = React.useState(() => window.matchMedia(query).matches);
 
   useEffect(() => {
     const mediaQueryList = window.matchMedia(query);
@@ -20,6 +21,21 @@ function Lightbox({ items, index, onClose, onNext, onPrev, hideButtonsOnMobile }
   const touchEndY = useRef(null);
   const minSwipeDistance = 50;
   const isMobile = useMediaQuery("(max-width: 767px)");
+
+  useEffect(() => {
+    if (index !== null) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [index]);
+
   const onTouchStart = (e) => {
     touchStartX.current = e.changedTouches[0].screenX;
     touchStartY.current = e.changedTouches[0].screenY;
@@ -63,35 +79,63 @@ function Lightbox({ items, index, onClose, onNext, onPrev, hideButtonsOnMobile }
       onTouchEnd={onTouchEnd}
     >
       <div className="flex flex-col gap-4 mb-4 w-full max-w-5xl items-center">
-        <div className="flex flex-col sm:flex-row gap-4 w-full">
-          <div className="relative w-full sm:w-1/2 max-h-[80vh]">
+        <div
+          className={`flex w-full ${
+            isMobile
+              ? "flex-col h-screen gap-3 justify-center"
+              : "flex-row max-h-[80vh] gap-4 items-center"
+          }`}
+        >
+          <div
+            className="relative w-full sm:w-1/2 flex justify-center"
+            style={
+              isMobile ? { height: "47vh" } : { maxHeight: "80vh" }
+            }
+          >
             <img
               src={items[index].before}
               alt="Before"
-              className="w-full h-full object-contain border-4 border-white rounded-lg"
+              className="object-contain border-4 border-white rounded-lg"
+              style={{ maxHeight: "100%", maxWidth: "100%" }}
             />
-            <span className="absolute top-2 left-2 bg-red-700 text-white text-xs px-2 py-1 rounded">
+            <span className="absolute top-2 left-2 bg-red-700 text-white text-xs px-2 py-1 rounded select-none">
               Before
             </span>
           </div>
-
-          <div className="relative w-full sm:w-1/2 max-h-[80vh]">
+          <div
+            className="relative w-full sm:w-1/2 flex justify-center"
+            style={
+              isMobile ? { height: "47vh" } : { maxHeight: "80vh" }
+            }
+          >
             <img
               src={items[index].after}
               alt="After"
-              className="w-full h-full object-contain border-4 border-white rounded-lg"
+              className="object-contain border-4 border-white rounded-lg"
+              style={{ maxHeight: "100%", maxWidth: "100%" }}
             />
-            <span className="absolute top-2 left-2 bg-green-700 text-white text-xs px-2 py-1 rounded">
+            <span className="absolute top-2 left-2 bg-green-700 text-white text-xs px-2 py-1 rounded select-none">
               After
             </span>
           </div>
         </div>
-
         <div className={`mt-6 flex gap-4 ${hideButtonsOnMobile && isMobile ? "hidden" : ""}`}>
-          <button onClick={(e) => { e.stopPropagation(); onPrev(); }} className="bg-white text-black px-6 py-2 rounded">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onPrev();
+            }}
+            className="bg-white text-black px-6 py-2 rounded"
+          >
             Previous
           </button>
-          <button onClick={(e) => { e.stopPropagation(); onNext(); }} className="bg-white text-black px-6 py-2 rounded">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onNext();
+            }}
+            className="bg-white text-black px-6 py-2 rounded"
+          >
             Next
           </button>
         </div>
@@ -99,6 +143,7 @@ function Lightbox({ items, index, onClose, onNext, onPrev, hideButtonsOnMobile }
     </div>
   );
 }
+
 Lightbox.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
